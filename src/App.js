@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Menu from './Menu';
+import Page from './Page';
+import { ids } from "./pages";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { id: '' };
+
+    this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
+  }
+
+  handleMenuItemClick(id) {
+    if (this.state.id !== id)
+      this.setState({ id });
+  }
+
+  render() {
+    const id = this.state.id;
+
+    return (
+      <div>
+        <Menu ids={ids} onItemClick={this.handleMenuItemClick}/>
+        <Page id={id}/>
+      </div>
+    );
+  }
 }
-
-export default App;

@@ -1,0 +1,33 @@
+.system-menu-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.system-menu-wrapper > .system-menu-container {
+  margin: 0;
+  padding: 0;
+  background-color: dodgerblue;
+}
+
+.system-menu-container > .system-menu-item {
+  display: inline-block;
+  border-bottom: dodgerblue solid 0.3em;
+  padding: 1em 1em 0.7em;
+  color: white;
+  list-style: none;
+  user-select: none;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.system-menu-container > .system-menu-item:hover {
+  color: black;
+  background-color: white;
+  border-bottom-color: white;
+}
+
+.system-menu-container > .system-menu-item.selected {
+  border-bottom-color: white;
+}
