@@ -1,0 +1,31 @@
+.field {
+
+}
+
+.row {
+
+}
+
+.cell {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  line-height: 2em;
+  vertical-align: bottom;
+  font-family: monospace;
+  font-size: 1.5em;
+  background-color: lightgray;
+  cursor: pointer;
+  user-select: none;
+  border: white solid 2px;
+}
+
+.cell:not(.revealed):hover {
+  border-color: black;
+}
+
+.cell.revealed {
+  border-color: white;
+  background-color: white;
+}
