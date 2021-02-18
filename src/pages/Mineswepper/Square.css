@@ -1,12 +1,4 @@
-.field {
-
-}
-
-.row {
-
-}
-
-.cell {
+.square {
   display: inline-block;
   width: 2em;
   height: 2em;
@@ -15,17 +7,21 @@
   vertical-align: bottom;
   font-family: monospace;
   font-size: 1.5em;
-  background-color: lightgray;
+  border: white solid 2px;
+  background-color: white;
   cursor: pointer;
   user-select: none;
-  border: white solid 2px;
 }
 
-.cell:not(.revealed):hover {
+.square.bomb {
+  font-weight: bold;
+}
+
+.square.number {
+  color: gray;
+}
+
+.square.closed:hover {
   border-color: black;
-}
-
-.cell.revealed {
-  border-color: white;
-  background-color: white;
+  background-color: lightgray;
 }
