@@ -1,11 +1,8 @@
 import React from 'react';
+import './Board.css';
 import Square from './Square';
 
 export default class Board extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const rows = [];
 
@@ -15,12 +12,16 @@ export default class Board extends React.Component {
       for (let x = 0; x < this.props.data[y].length; x++) {
         const char = this.props.data[y][x];
 
-        row.push(<Square key={x}>{char}</Square>);
+        row.push(
+          <Square key={x} onSquareClick={button => this.props.onSquareClick(button, { x, y })}>
+            {char}
+          </Square>
+        );
       }
 
       rows.push(<div key={y}>{row}</div>);
     }
 
-    return <div>{rows}</div>
+    return <div className="board">{rows}</div>
   }
 }

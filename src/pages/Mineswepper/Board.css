@@ -1,0 +1,4 @@
+.board {
+  display: inline-block;
+  border: lightgray solid 2px;
+}

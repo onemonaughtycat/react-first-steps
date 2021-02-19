@@ -7,21 +7,20 @@
   vertical-align: bottom;
   font-family: monospace;
   font-size: 1.5em;
-  border: white solid 2px;
+  border: lightgray solid 2px;
   background-color: white;
-  cursor: pointer;
   user-select: none;
-}
-
-.square.bomb {
-  font-weight: bold;
 }
 
 .square.number {
   color: gray;
 }
 
+.square.closed {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
 .square.closed:hover {
   border-color: black;
-  background-color: lightgray;
 }
