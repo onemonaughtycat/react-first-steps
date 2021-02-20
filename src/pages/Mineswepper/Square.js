@@ -1,36 +1,29 @@
 import React from 'react';
+import Icons from "./Icons";
+
 import './Square.css';
-import Types from "./Types";
 
 export default class Square extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.handleContextMenu = this.handleContextMenu.bind(this);
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
-  }
-
-  handleContextMenu(e) {
+  handleContextMenu = (e) => {
     e.preventDefault();
   }
 
-  handleMouseDown(e) {
+  handleMouseDown = (e) => {
     this._buttons = e.buttons;
   }
 
-  handleMouseUp() {
+  handleMouseUp = (e) => {
     if (!this._buttons) return;
 
     switch (this._buttons) {
       case 1:
-        this.props.onSquareClick('left');
+        this.props.onLeftClick(this.props);
         break;
       case 2:
-        this.props.onSquareClick('right');
+        this.props.onRightClick(this.props);
         break;
       case 3:
-        this.props.onSquareClick('both');
+        this.props.onBothClick(this.props);
         break;
       default:
         break;
@@ -41,12 +34,25 @@ export default class Square extends React.Component {
 
   render() {
     const className = ['square'];
+    let value = '';
 
-    if (this.props.children === Types.CLOSED)
-      className.push('closed');
+    if (this.props.isOpened) {
+      className.push('opened');
 
-    if (1 <= this.props.children && this.props.children <= 8)
-      className.push('number');
+      if (this.props.withBomb)
+        value = Icons.bomb;
+
+      if (this.props.nearBombsCount) {
+        value = this.props.nearBombsCount;
+        className.push('number');
+      }
+    } else {
+      if (this.props.isMarked)
+        value = Icons.mark;
+
+      if (this.props.isHelper)
+        value = Icons.helper;
+    }
 
     return (
       <div
@@ -55,7 +61,7 @@ export default class Square extends React.Component {
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
       >
-        {this.props.children}
+        {value}
       </div>
     );
   }

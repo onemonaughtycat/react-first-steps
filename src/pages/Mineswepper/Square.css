@@ -8,19 +8,19 @@
   font-family: monospace;
   font-size: 1.5em;
   border: lightgray solid 2px;
-  background-color: white;
+  background-color: lightgray;
   user-select: none;
+}
+
+.square:not(.opened):hover {
+  border-color: black;
+  cursor: pointer;
+}
+
+.square.opened {
+  background-color: white;
 }
 
 .square.number {
   color: gray;
-}
-
-.square.closed {
-  background-color: lightgray;
-  cursor: pointer;
-}
-
-.square.closed:hover {
-  border-color: black;
 }
