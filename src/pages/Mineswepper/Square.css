@@ -7,9 +7,11 @@
   vertical-align: bottom;
   font-family: monospace;
   font-size: 1.5em;
-  border: lightgray solid 2px;
-  background-color: lightgray;
+  border: #bbbbbb solid 2px;
+  background-color: #cacaca;
   user-select: none;
+  border-radius: 8px;
+  margin: 2px;
 }
 
 .square:not(.opened):hover {
@@ -19,6 +21,7 @@
 
 .square.opened {
   background-color: white;
+  border-color: #e2dfdf;
 }
 
 .square.number {

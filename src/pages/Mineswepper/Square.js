@@ -4,15 +4,21 @@ import Icons from "./Icons";
 import './Square.css';
 
 export default class Square extends React.Component {
-  handleContextMenu = (e) => {
+  handleContextMenu = e => {
     e.preventDefault();
   }
 
-  handleMouseDown = (e) => {
+  /* Нажатие ЛКМ и ПКМ одновременно используется для безопасного открытия ячеек.
+   * Разделение на onMouseDown и onMouseUp сделано для следующего:
+   * если была нажата одна из кнопок (1 - ЛКМ, 2 - ПКМ), то будет вызвано событие одной из этих кнопок,
+   * иначе будет считаться нажатие двух кнопок (3).
+   * Грубо говоря, игрок не проиграет, если даже случайно нажмет обе кнопки на клетку, где есть бомба. */
+
+  handleMouseDown = e => {
     this._buttons = e.buttons;
   }
 
-  handleMouseUp = (e) => {
+  handleMouseUp = e => {
     if (!this._buttons) return;
 
     switch (this._buttons) {
