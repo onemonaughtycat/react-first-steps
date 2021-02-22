@@ -1,7 +1,7 @@
 import React from 'react';
 import Game from "./Game";
 
-export default class Mineswepper extends React.Component {
+export default class Minesweeper extends React.Component {
   handleGameOver = isWin => {
     alert(isWin ? 'Ты победил' : 'Игра окончена');
   }

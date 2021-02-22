@@ -1,11 +1,11 @@
 import Hello from './Hello';
 import Fox from './Fox';
-import Mineswepper from './Mineswepper';
+import Minesweeper from './Minesweeper';
 
 const pages = {
   'Hello': Hello,
   'Fox': Fox,
-  'Mineswepper': Mineswepper,
+  'Minesweeper': Minesweeper,
 };
 
 const ids = Object.keys(pages);
