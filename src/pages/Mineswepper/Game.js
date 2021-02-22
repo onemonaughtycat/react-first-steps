@@ -2,36 +2,33 @@ import React from 'react';
 import Board from './Board';
 
 import Logic from "./Logic";
+import Status from "./Status";
 
 import './Game.css';
 
 export default class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
-    };
-
-    Logic.logBoard(this.state.board);
+  state = {
+    board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
   }
 
   handleLeftClick = square => {
-    this.setState({
-      board: Logic.openSquare(this.state.board, square),
-    });
+    const { board, status } = Logic.openSquare(this.state.board, square);
+    this.setState({ board }, () => this.callbackGameOver(status));
   }
 
   handleRightClick = square => {
-    this.setState({
-      board: Logic.setMark(this.state.board, square),
-    });
+    const { board, status } = Logic.setMark(this.state.board, square);
+    this.setState({ board }, () => this.callbackGameOver(status));
   }
 
   handleBothClick = square => {
-    this.setState({
-      board: Logic.tryOpenNearSquares(this.state.board, square),
-    });
+    const { board, status } = Logic.tryOpenNearSquares(this.state.board, square);
+    this.setState({ board }, () => this.callbackGameOver(status));
+  }
+
+  callbackGameOver(status) {
+    if (status)
+      this.props.onGameOver(status === Status.IsWin);
   }
 
   render() {

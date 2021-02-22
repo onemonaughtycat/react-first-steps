@@ -1,3 +1,5 @@
+import Status from "./Status";
+
 /**
  * @typedef BoardState Состояние поля
  * @property {number} x Координата X
@@ -58,7 +60,7 @@ export default class Logic {
 
     /* Создаем поле. */
 
-    return Array(height).fill()
+    const board = Array(height).fill()
       .map((_, y) => Array(width).fill()
         .map((_, x) => {
           const filtered = nearBombs.filter(cell => cell.x === x && cell.y === y);
@@ -69,64 +71,64 @@ export default class Logic {
             nearBombsCount: filtered.length ? filtered[0].count : 0,
             isOpened: false,
             isMarked: false,
-            isHelper: false,
           };
         })
       );
+
+    console.log(Logic.logBoard(board));
+
+    return board;
   }
+
+  /**
+   * @typedef ReturnObject
+   * @property {BoardState[][]} board Состояние поля
+   * @property {Status} status Статус игры
+   */
 
   /**
    * Открыть ячейку и, по возможности, все остальные рядом с ней, если они пустые.
    * @param {BoardState[][]} boardState Последнее состояние поля
    * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {BoardState[][]} Новое состояние поля
+   * @returns {ReturnObject} Новое состояние поля и статус игры
    */
   static openSquare(boardState, currSquare) {
-    const newBoardState = boardState.map(row => row.map(sqr => sqr));
-    const newCurrSquare = newBoardState[currSquare.y][currSquare.x];
+    const board = boardState.map(row => row.map(sqr => sqr));
+    const square = board[currSquare.y][currSquare.x];
 
-    openSquareRec(newBoardState, newCurrSquare);
+    openSquareRec(board, square);
 
-    if (newCurrSquare.isOpened && newCurrSquare.withBomb) {
-      newBoardState.forEach(row => row.forEach(square => square.isOpened = true));
-      alert('Ты проиграл.');
-    }
+    const status = Logic.getStatus(board, square);
 
-    return newBoardState;
+    if (status === Status.IsLose)
+      board.forEach(row => row.forEach(sqr => sqr.isOpened = true));
+
+    return { board, status };
   }
 
   /**
    * Поставить или снять метку на закрытую ячейку ("!" или "?").
    * @param {BoardState[][]} boardState Последнее состояние поля
    * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {BoardState[][]} Новое состояние поля
+   * @returns {ReturnObject} Новое состояние поля
    */
   static setMark(boardState, currSquare) {
     if (currSquare.isOpened)
       return boardState;
 
-    return boardState.map(row => (
-      row.map(square => {
-        if (!(square.x === currSquare.x && square.y === currSquare.y))
-          return square;
+    const board = boardState.map(row => row.map(sqr => sqr));
+    const square = board[currSquare.y][currSquare.x];
 
-        if (!square.isMarked && !square.isHelper)
-          square = { ...square, isMarked: true };
-        else if (square.isMarked && !square.isHelper)
-          square = { ...square, isMarked: false, isHelper: true };
-        else if (!square.isMarked && square.isHelper)
-          square = { ...square, isHelper: false };
+    square.isMarked = !currSquare.isMarked;
 
-        return square;
-      })
-    ))
+    return { board, status: Logic.getStatus(board, square) };
   }
 
   /**
    * Открыть соседние ячейки, если среди них нет бомб.
    * @param {BoardState[][]} boardState Последнее состояние поля
    * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {BoardState[][]} Новое состояние поля
+   * @returns {ReturnObject} Новое состояние поля
    */
   static tryOpenNearSquares(boardState, currSquare) {
     let isBombsNear = false; 
@@ -141,17 +143,40 @@ export default class Logic {
     });
 
     if (isBombsNear)
-      return boardState;
+      return { board: boardState, status: Logic.getStatus(boardState, currSquare) };
 
-    const newBoardState = boardState.map(row => row.map(sqr => sqr));
+    const board = boardState.map(row => row.map(sqr => sqr));
 
-    doWithNearSquares(newBoardState, currSquare, square => {
+    doWithNearSquares(board, currSquare, square => {
       if (square.isOpened || square.isMarked) return;
 
       square.isOpened = true;
     });
 
-    return newBoardState;
+    return { board, status: Logic.getStatus(board, currSquare) };
+  }
+
+  /**
+   * Получить статус игры
+   * @param {BoardState[][]} boardState Последнее состояние поля
+   * @param {BoardState} currSquare Выбранная ячейка
+   * @returns {Status} Статус игры
+   */
+  static getStatus(boardState, currSquare) {
+    let isWin = true;
+
+    for (const row of boardState) {
+      for (const square of row)
+        if (square.withBomb && !square.isMarked)
+          isWin = false;
+
+      if (!isWin)
+        break;
+    }
+
+    const isLose = currSquare.isOpened && currSquare.withBomb;
+
+    return isLose ? Status.IsLose : isWin ? Status.IsWin : 0;
   }
 
   /**
