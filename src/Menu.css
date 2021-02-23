@@ -2,11 +2,13 @@
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  background-color: dodgerblue;
 }
 
 .system-menu-wrapper > .system-menu-container {
   margin: 0;
   padding: 0;
+  white-space: nowrap;
   background-color: dodgerblue;
 }
 

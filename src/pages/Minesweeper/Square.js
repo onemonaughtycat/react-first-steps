@@ -48,10 +48,8 @@ export default class Square extends React.Component {
       if (this.props.withBomb)
         value = Icons.bomb;
 
-      if (this.props.nearBombsCount) {
+      if (this.props.nearBombsCount)
         value = this.props.nearBombsCount;
-        className.push('number');
-      }
     } else {
       if (this.props.isMarked)
         value = Icons.mark;
@@ -67,7 +65,9 @@ export default class Square extends React.Component {
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
       >
-        {value}
+        <div className="value">
+          {value}
+        </div>
       </div>
     );
   }

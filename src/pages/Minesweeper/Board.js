@@ -20,7 +20,7 @@ export default class Board extends React.Component {
     return (
       <div className="board">
         {this.props.data.map((row, y) => (
-          <div key={y}>
+          <div key={y} className="row">
             {row.map((square, x) => (
               <Square
                 key={x}

@@ -1,3 +1,10 @@
 .board {
-  display: inline-block;
+  display: block;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: stretch;
 }

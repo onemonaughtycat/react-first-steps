@@ -1,17 +1,12 @@
 .square {
   display: inline-block;
-  width: 2em;
-  height: 2em;
-  text-align: center;
-  line-height: 2em;
   vertical-align: bottom;
-  font-family: monospace;
-  font-size: 1.5em;
-  border: #bbbbbb solid 2px;
-  background-color: #cacaca;
+  position: relative;
+  flex: 0 1 2.5em;
+  aspect-ratio: 1/1;
+  border: lightgray solid 1px;
+  background-color: lightgray;
   user-select: none;
-  border-radius: 8px;
-  margin: 2px;
 }
 
 .square:not(.opened):hover {
@@ -21,9 +16,14 @@
 
 .square.opened {
   background-color: white;
-  border-color: #e2dfdf;
 }
 
-.square.number {
-  color: gray;
+.square > .value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: monospace;
+  font-size: 1.25em;
+  overflow: hidden;
 }
