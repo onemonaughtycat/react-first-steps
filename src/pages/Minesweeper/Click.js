@@ -3,10 +3,10 @@
  * @readonly
  * @enum {number}
  */
-const ClickType = {
+const Click = {
   openSquare: 1,
   setMark: 2,
   openNearSquares: 3,
 }
 
-export default ClickType;
+export default Click;

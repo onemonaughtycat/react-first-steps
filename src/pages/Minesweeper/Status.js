@@ -1,11 +1,12 @@
 /**
- * Тип GameOver'а
+ * Статус игры
  * @readonly
  * @enum {number}
  */
 const Status = {
-  lose: 1,
-  win: 2,
+  running: 1,
+  lose: 2,
+  win: 3,
 }
 
 export default Status;

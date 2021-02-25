@@ -1,6 +1,6 @@
 import React from 'react';
 import Icons from './Icons';
-import ClickType from './ClickType';
+import Click from './Click';
 
 import './Square.css';
 
@@ -24,13 +24,13 @@ export default class Square extends React.Component {
 
     switch (this.buttons) {
       case 1:
-        this.props.onSquareClick(ClickType.openSquare, this.props);
+        this.props.onSquareClick(Click.openSquare, this.props);
         break;
       case 2:
-        this.props.onSquareClick(ClickType.setMark, this.props);
+        this.props.onSquareClick(Click.setMark, this.props);
         break;
       case 3:
-        this.props.onSquareClick(ClickType.openNearSquares, this.props);
+        this.props.onSquareClick(Click.openNearSquares, this.props);
         break;
       default:
         break;

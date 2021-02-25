@@ -4,8 +4,8 @@ import Square from './Square';
 import './Board.css';
 
 export default class Board extends React.Component {
-  handleSquareClick = (clickType, square) => {
-    this.props.onSquareClick(clickType, square);
+  handleSquareClick = (click, square) => {
+    this.props.onSquareClick(click, square);
   }
 
   render() {

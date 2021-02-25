@@ -2,7 +2,7 @@ import React from 'react';
 import Board from './Board';
 
 import Logic from './Logic';
-import ClickType from './ClickType';
+import Click from './Click';
 import Status from './Status';
 
 import './Game.css';
@@ -14,19 +14,19 @@ export default class Game extends React.Component {
     this.setState(this.restart());
   }
 
-  handleSquareClick = (clickType, square) => {
-    if (this.state.status) return;
+  handleSquareClick = (click, square) => {
+    if (this.state.status !== Status.running) return;
 
     let board;
 
-    switch (clickType) {
-      case ClickType.openSquare:
+    switch (click) {
+      case Click.openSquare:
         board = Logic.openSquare(this.state.board, square)
         break;
-      case ClickType.setMark:
+      case Click.setMark:
         board = Logic.setMark(this.state.board, square)
         break;
-      case ClickType.openNearSquares:
+      case Click.openNearSquares:
         board = Logic.openNearSquares(this.state.board, square)
         break;
       default:
@@ -43,7 +43,7 @@ export default class Game extends React.Component {
   restart() {
     return {
       board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
-      status: 0,
+      status: Status.running,
     };
   }
 

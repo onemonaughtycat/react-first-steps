@@ -83,7 +83,7 @@ export default class Logic {
     openSquareRec(board, square);
 
     if (square.isOpened && square.withBomb)
-      board.forEach(row => row.forEach(sqr => sqr.isOpened));
+      board.forEach(row => row.forEach(sqr => sqr.isOpened = true));
 
     return board;
   }
@@ -133,8 +133,7 @@ export default class Logic {
 
     doWithNearSquares(board, square, sqr => {
       if (!sqr.isOpened && !sqr.isMarked)
-        sqr.isOpened = true;
-        // openSquareRec(board, sqr);
+        openSquareRec(board, sqr);
     });
 
     return board;
@@ -164,7 +163,7 @@ export default class Logic {
     return (
       isLose ? Status.lose :
       isWin  ? Status.win  :
-      0
+      Status.running
     );
   }
 
