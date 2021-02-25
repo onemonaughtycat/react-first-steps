@@ -4,16 +4,8 @@ import Square from './Square';
 import './Board.css';
 
 export default class Board extends React.Component {
-  handleLeftClick = square => {
-    this.props.onLeftClick(square);
-  }
-
-  handleRightClick = square => {
-    this.props.onRightClick(square);
-  }
-
-  handleBothClick = square => {
-    this.props.onBothClick(square);
+  handleSquareClick = (clickType, square) => {
+    this.props.onSquareClick(clickType, square);
   }
 
   render() {
@@ -30,10 +22,7 @@ export default class Board extends React.Component {
                 nearBombsCount={square.nearBombsCount}
                 isOpened={square.isOpened}
                 isMarked={square.isMarked}
-                isHelper={square.isHelper}
-                onLeftClick={this.handleLeftClick}
-                onRightClick={this.handleRightClick}
-                onBothClick={this.handleBothClick}
+                onSquareClick={this.handleSquareClick}
               />
             ))}
           </div>

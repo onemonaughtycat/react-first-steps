@@ -1,14 +1,13 @@
 import Status from "./Status";
 
 /**
- * @typedef BoardState Состояние поля
+ * @typedef Square Ячейка
  * @property {number} x Координата X
  * @property {number} y Координата Y
- * @property {boolean} withBomb Ячейка с бомбой
- * @property {number} nearBombsCount Количество бомб рядом с ячейкой
- * @property {boolean} isOpened Ячейка открыта
- * @property {boolean} isMarked Ячейка помечена на возможное наличие бомбы
- * @property {boolean} isHelper
+ * @property {boolean} withBomb Есть бомба
+ * @property {number} nearBombsCount Сколько рядом бомб
+ * @property {boolean} isOpened Открыта ли
+ * @property {boolean} isMarked Помечена ли
  */
 
 /**
@@ -16,225 +15,225 @@ import Status from "./Status";
  */
 export default class Logic {
   /**
-   * Сгенерировать начальное состояние поля
-   * @param {number} width Ширина поля
-   * @param {number} height Высота поля
-   * @param {number} bombsCount Количество бомб на поле
-   * @returns {BoardState[][]} Состояние поля
+   * Создать новое поле и сгенерировать бомбы на ней
+   * @param {number} width Ширина
+   * @param {number} height Высота
+   * @param {number} bombsCount Количество бомб
+   * @returns {Square[][]} Поле
    */
   static initBoard(width, height, bombsCount) {
-    /* Расставляем бомбы. */
-
-    const bombs = [];
-    const isBomb = (x, y) => bombs.filter(bomb => bomb.x === x && bomb.y === y).length;
+    const board = Array(height).fill()
+      .map((_, y) => Array(width).fill()
+        .map((_, x) => ({
+          x, y,
+          withBomb: false,
+          nearBombsCount: 0,
+          isOpened: false,
+          isMarked: false,
+          })
+        )
+      )
 
     for (let i = 0; i < bombsCount; i++) {
       const x = Math.floor(Math.random() * width);
       const y = Math.floor(Math.random() * height);
 
-      if (isBomb(x, y))
-        i--;
+      if (!board[y][x].withBomb)
+        board[y][x].withBomb = true;
       else
-        bombs.push({ x, y });
+        i--;
     }
 
-    /* Помечаем для каждой ячейки сколько рядом с ней находится бомб. */
-
-    const nearBombs = [];
-
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        if (isBomb(x, y)) continue;
+    for (const row of board) {
+      for (const square of row) {
+        if (square.withBomb)
+          continue;
 
         let count = 0;
 
-        for (let dy = -1; dy <= 1; dy++)
-          for (let dx = -1; dx <= 1; dx++)
-            if (isBomb(x - dx, y - dy))
-              count++;
+        doWithNearSquares(board, square, sqr => {
+          if (sqr.withBomb)
+            count++;
+        })
 
         if (count)
-          nearBombs.push({ x, y, count });
+          square.nearBombsCount = count;
       }
     }
 
-    /* Создаем поле. */
-
-    const board = Array(height).fill()
-      .map((_, y) => Array(width).fill()
-        .map((_, x) => {
-          const filtered = nearBombs.filter(cell => cell.x === x && cell.y === y);
-
-          return {
-            x, y,
-            withBomb: Boolean(isBomb(x, y)),
-            nearBombsCount: filtered.length ? filtered[0].count : 0,
-            isOpened: false,
-            isMarked: false,
-          };
-        })
-      );
-
-    console.log(Logic.logBoard(board));
+    Logic.logBoard(board);
 
     return board;
   }
 
   /**
-   * @typedef ReturnObject
-   * @property {BoardState[][]} board Состояние поля
-   * @property {Status} status Статус игры
+   * Открыть ячейку и, по возможности,
+   * все остальные рядом с ней, если они пустые.
+   * @param {Square[][]} board Поле
+   * @param {Square} square Выбранная ячейка
+   * @returns {Square[][] | null} Новое поле
    */
+  static openSquare(board, square) {
+    if (square.isOpened)
+      return null;
 
-  /**
-   * Открыть ячейку и, по возможности, все остальные рядом с ней, если они пустые.
-   * @param {BoardState[][]} boardState Последнее состояние поля
-   * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {ReturnObject} Новое состояние поля и статус игры
-   */
-  static openSquare(boardState, currSquare) {
-    const board = boardState.map(row => row.map(sqr => sqr));
-    const square = board[currSquare.y][currSquare.x];
+    board = board.map(row => row.map(sqr => sqr));
+    square = board[square.y][square.x];
 
     openSquareRec(board, square);
 
-    const status = Logic.getStatus(board, square);
+    if (square.isOpened && square.withBomb)
+      board.forEach(row => row.forEach(sqr => sqr.isOpened));
 
-    if (status === Status.IsLose)
-      board.forEach(row => row.forEach(sqr => sqr.isOpened = true));
-
-    return { board, status };
+    return board;
   }
 
   /**
-   * Поставить или снять метку на закрытую ячейку ("!" или "?").
-   * @param {BoardState[][]} boardState Последнее состояние поля
-   * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {ReturnObject} Новое состояние поля
+   * Поставить или снять метку на закрытую ячейку.
+   * @param {Square[][]} board Поле
+   * @param {Square} square Выбранная ячейка
+   * @returns {Square[][] | null} Новое поле
    */
-  static setMark(boardState, currSquare) {
-    if (currSquare.isOpened)
-      return boardState;
+  static setMark(board, square) {
+    if (square.isOpened)
+      return null;
 
-    const board = boardState.map(row => row.map(sqr => sqr));
-    const square = board[currSquare.y][currSquare.x];
+    board = board.map(row => row.map(sqr => sqr));
+    square = board[square.y][square.x];
 
-    square.isMarked = !currSquare.isMarked;
+    square.isMarked = !square.isMarked;
 
-    return { board, status: Logic.getStatus(board, square) };
+    return board;
   }
 
   /**
    * Открыть соседние ячейки, если среди них нет бомб.
-   * @param {BoardState[][]} boardState Последнее состояние поля
-   * @param {BoardState} currSquare Выбранная ячейка
-   * @returns {ReturnObject} Новое состояние поля
+   * @param {Square[][]} board Поле
+   * @param {Square} square Выбранная ячейка
+   * @returns {Square[][] | null} Новое поле
    */
-  static tryOpenNearSquares(boardState, currSquare) {
+  static openNearSquares(board, square) {
+    let closedCount = 0;
     let isBombsNear = false; 
 
-    doWithNearSquares(boardState, currSquare, square => {
-      if (isBombsNear) return;
+    doWithNearSquares(board, square, sqr => {
+      if (!sqr.isOpened && !sqr.isMarked)
+        closedCount++;
+      else
+        return;
 
-      if (square.isOpened || square.isMarked) return;
-
-      if (square.withBomb)
+      if (sqr.withBomb)
         isBombsNear = true;
     });
 
-    if (isBombsNear)
-      return { board: boardState, status: Logic.getStatus(boardState, currSquare) };
+    if (!closedCount || isBombsNear)
+      return null;
 
-    const board = boardState.map(row => row.map(sqr => sqr));
+    board = board.map(row => row.map(sqr => sqr));
 
-    doWithNearSquares(board, currSquare, square => {
-      if (square.isOpened || square.isMarked) return;
-
-      square.isOpened = true;
+    doWithNearSquares(board, square, sqr => {
+      if (!sqr.isOpened && !sqr.isMarked)
+        sqr.isOpened = true;
+        // openSquareRec(board, sqr);
     });
 
-    return { board, status: Logic.getStatus(board, currSquare) };
+    return board;
   }
 
   /**
    * Получить статус игры
-   * @param {BoardState[][]} boardState Последнее состояние поля
-   * @param {BoardState} currSquare Выбранная ячейка
+   * @param {Square[][]} board Поле
+   * @param {Square} square Выбранная ячейка
    * @returns {Status} Статус игры
    */
-  static getStatus(boardState, currSquare) {
+  static getStatus(board, square) {
     let isWin = true;
 
-    for (const row of boardState) {
-      for (const square of row)
-        if (square.withBomb && !square.isMarked)
+    for (const row of board) {
+      for (const square of row) {
+        if (!square.isOpened && !square.withBomb)
           isWin = false;
+      }
 
       if (!isWin)
         break;
     }
 
-    const isLose = currSquare.isOpened && currSquare.withBomb;
+    const isLose = square.isOpened && square.withBomb;
 
-    return isLose ? Status.IsLose : isWin ? Status.IsWin : 0;
+    return (
+      isLose ? Status.lose :
+      isWin  ? Status.win  :
+      0
+    );
   }
 
   /**
    * Показать в консоли расположение бомб на поле.
-   * @param {BoardState[][]} boardState Состояние поля
+   * @param {Square[][]} board Поле
    */
-  static logBoard(boardState) {
+  static logBoard(board) {
     console.log(
-      boardState.map(row => (
-        row.map(square => (
-          square.withBomb ? 'Q' : square.nearBombsCount ? square.nearBombsCount + '' : ' '
-        ))
+      board.map(row => (
+        row.map(square => {
+          if (square.withBomb)
+            return 'Q';
+
+          if (square.nearBombsCount)
+            return String(square.nearBombsCount);
+
+          return ' ';
+        })
       ))
     );
   }
 }
 
 /**
- * С помощью рекурсии открыть все пустые ячейки от выбранной до ячеек с количеством рядом находящихся бомб.
- * @param {BoardState[][]} boardState Состояние поля
- * @param {BoardState} currSquare Выбранная ячейка
+ * С помощью рекурсии открыть все пустые ячейки
+ * от выбранной до ячеек с количеством рядом находящихся бомб.
+ * @param {Square[][]} board Поле
+ * @param {Square} square Выбранная ячейка
  */
-function openSquareRec(boardState, currSquare) {
-  if (currSquare.isOpened || currSquare.isMarked)
+function openSquareRec(board, square) {
+  if (square.isOpened || square.isMarked)
     return;
 
-  currSquare.isOpened = true;
+  square.isOpened = true;
 
-  if (currSquare.withBomb || currSquare.nearBombsCount)
+  if (square.withBomb || square.nearBombsCount)
     return;
 
-  doWithNearSquares(boardState, currSquare, square => openSquareRec(boardState, square));
+  doWithNearSquares(board, square, sqr => (
+    openSquareRec(board, sqr)
+  ));
 };
 
 /**
- * @callback nearSquareCallback
- * @param {BoardState} square Выбранная ячейка
+ * @callback NearSquareCallback
+ * @param {Square} square Выбранная ячейка
  */
 
 /**
  * Сделать что-то с ближайшими от выбранной ячейками 
- * @param {BoardState[][]} boardState Состояние поля
- * @param {BoardState} currSquare Выбранная ячейка
- * @param {nearSquareCallback} callback Колбэк
+ * @param {Square[][]} board Поле
+ * @param {Square} square Выбранная ячейка
+ * @param {NearSquareCallback} callback Колбэк
  */
-function doWithNearSquares(boardState, currSquare, callback) {
-  const x = currSquare.x;
-  const y = currSquare.y;
+function doWithNearSquares(board, square, callback) {
+  const { x, y } = square;
 
-  for (let dy = -1; dy <= 1; dy++)
+  for (let dy = -1; dy <= 1; dy++) {
     for (let dx = -1; dx <= 1; dx++) {
-      if (!(boardState[y + dy] && boardState[y + dy][x + dx])) continue;
+      if (!(board[y + dy] && board[y + dy][x + dx]))
+        continue;
 
-      const square = boardState[y + dy][x + dx];
+      const sqr = board[y + dy][x + dx];
 
-      if (!square) continue;
-      if (square.x === x && square.y === y) continue;
+      if (sqr.x === x && sqr.y === y)
+        continue;
 
-      callback(square);
+      callback(sqr);
     }
+  }
 }

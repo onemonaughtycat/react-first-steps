@@ -1,11 +1,11 @@
 /**
- * Статус игры "Сапер"
+ * Тип GameOver'а
  * @readonly
  * @enum {number}
  */
 const Status = {
-  IsLose: 1,
-  IsWin: 2,
+  lose: 1,
+  win: 2,
 }
 
 export default Status;

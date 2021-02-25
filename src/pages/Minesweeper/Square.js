@@ -1,5 +1,6 @@
 import React from 'react';
-import Icons from "./Icons";
+import Icons from './Icons';
+import ClickType from './ClickType';
 
 import './Square.css';
 
@@ -15,27 +16,27 @@ export default class Square extends React.Component {
    * Грубо говоря, игрок не проиграет, если даже случайно нажмет обе кнопки на клетку, где есть бомба. */
 
   handleMouseDown = e => {
-    this._buttons = e.buttons;
+    this.buttons = e.buttons;
   }
 
   handleMouseUp = e => {
-    if (!this._buttons) return;
+    if (!this.buttons) return;
 
-    switch (this._buttons) {
+    switch (this.buttons) {
       case 1:
-        this.props.onLeftClick(this.props);
+        this.props.onSquareClick(ClickType.openSquare, this.props);
         break;
       case 2:
-        this.props.onRightClick(this.props);
+        this.props.onSquareClick(ClickType.setMark, this.props);
         break;
       case 3:
-        this.props.onBothClick(this.props);
+        this.props.onSquareClick(ClickType.openNearSquares, this.props);
         break;
       default:
         break;
     }
 
-    this._buttons = null;
+    this.buttons = null;
   }
 
   render() {
@@ -53,9 +54,6 @@ export default class Square extends React.Component {
     } else {
       if (this.props.isMarked)
         value = Icons.mark;
-
-      if (this.props.isHelper)
-        value = Icons.helper;
     }
 
     return (

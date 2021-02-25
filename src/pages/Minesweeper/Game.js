@@ -1,45 +1,73 @@
 import React from 'react';
 import Board from './Board';
 
-import Logic from "./Logic";
-import Status from "./Status";
+import Logic from './Logic';
+import ClickType from './ClickType';
+import Status from './Status';
 
 import './Game.css';
 
 export default class Game extends React.Component {
-  state = {
-    board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
+  state = this.restart();
+
+  handleRestartClick = e => {
+    this.setState(this.restart());
   }
 
-  handleLeftClick = square => {
-    const { board, status } = Logic.openSquare(this.state.board, square);
-    this.setState({ board }, () => this.callbackGameOver(status));
+  handleSquareClick = (clickType, square) => {
+    if (this.state.status) return;
+
+    let board;
+
+    switch (clickType) {
+      case ClickType.openSquare:
+        board = Logic.openSquare(this.state.board, square)
+        break;
+      case ClickType.setMark:
+        board = Logic.setMark(this.state.board, square)
+        break;
+      case ClickType.openNearSquares:
+        board = Logic.openNearSquares(this.state.board, square)
+        break;
+      default:
+        break;
+    }
+
+    if (!board) return;
+
+    const status = Logic.getStatus(board, board[square.y][square.x]);
+
+    this.setState({ board, status });
   }
 
-  handleRightClick = square => {
-    const { board, status } = Logic.setMark(this.state.board, square);
-    this.setState({ board }, () => this.callbackGameOver(status));
-  }
-
-  handleBothClick = square => {
-    const { board, status } = Logic.tryOpenNearSquares(this.state.board, square);
-    this.setState({ board }, () => this.callbackGameOver(status));
-  }
-
-  callbackGameOver(status) {
-    if (status)
-      this.props.onGameOver(status === Status.IsWin);
+  restart() {
+    return {
+      board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
+      status: 0,
+    };
   }
 
   render() {
+    let message = '';
+
+    switch (this.state.status) {
+      case Status.win:
+        message = 'Победа!';
+        break;
+      case Status.lose:
+        message = 'Игра окончена';
+        break;
+      default:
+        break;
+    }
+
     return (
       <div className="container">
-        <Board
-          data={this.state.board}
-          onLeftClick={this.handleLeftClick}
-          onRightClick={this.handleRightClick}
-          onBothClick={this.handleBothClick}
-        />
+        <div className="helpers">
+          <button onClick={this.handleRestartClick}>Начать заново</button>
+          <span className="message">{message}</span>
+        </div>
+        <Board data={this.state.board} onSquareClick={this.handleSquareClick}/>
       </div>
     );
   }
