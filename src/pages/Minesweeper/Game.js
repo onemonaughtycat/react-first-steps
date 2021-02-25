@@ -1,4 +1,5 @@
 import React from 'react';
+import Bar from './Bar';
 import Board from './Board';
 
 import Logic from './Logic';
@@ -8,10 +9,16 @@ import Status from './Status';
 import './Game.css';
 
 export default class Game extends React.Component {
-  state = this.restart();
+  state = {
+    board: Logic.initBoard(9, 9, 10),
+    status: Status.running,
+  };
 
-  handleRestartClick = e => {
-    this.setState(this.restart());
+  handleRestartClick = ({ width, height, bombsCount }) => {
+    this.setState({
+      board: Logic.initBoard(width, height, bombsCount),
+      status: Status.running,
+    });
   }
 
   handleSquareClick = (click, square) => {
@@ -40,33 +47,10 @@ export default class Game extends React.Component {
     this.setState({ board, status });
   }
 
-  restart() {
-    return {
-      board: Logic.initBoard(+this.props.width, +this.props.height, +this.props.bombsCount),
-      status: Status.running,
-    };
-  }
-
   render() {
-    let message = '';
-
-    switch (this.state.status) {
-      case Status.win:
-        message = 'Победа!';
-        break;
-      case Status.lose:
-        message = 'Игра окончена';
-        break;
-      default:
-        break;
-    }
-
     return (
       <div className="container">
-        <div className="helpers">
-          <button onClick={this.handleRestartClick}>Начать заново</button>
-          <span className="message">{message}</span>
-        </div>
+        <Bar status={this.state.status} onRestartClick={this.handleRestartClick}/>
         <Board data={this.state.board} onSquareClick={this.handleSquareClick}/>
       </div>
     );

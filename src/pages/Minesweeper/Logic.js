@@ -22,8 +22,8 @@ export default class Logic {
    * @returns {Square[][]} Поле
    */
   static initBoard(width, height, bombsCount) {
-    const board = Array(height).fill()
-      .map((_, y) => Array(width).fill()
+    const board = Array(+height).fill()
+      .map((_, y) => Array(+width).fill()
         .map((_, x) => ({
           x, y,
           withBomb: false,
@@ -34,7 +34,7 @@ export default class Logic {
         )
       )
 
-    for (let i = 0; i < bombsCount; i++) {
+    for (let i = 0; i < +bombsCount; i++) {
       const x = Math.floor(Math.random() * width);
       const y = Math.floor(Math.random() * height);
 

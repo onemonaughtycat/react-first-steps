@@ -1,0 +1,62 @@
+.bar {
+  font-family: monospace;
+}
+
+.main {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-item {
+  display: inline-block;
+  flex: 0 1 auto;
+}
+
+.button {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  margin: 0.75em;
+  border: black solid 2px;
+  border-radius: 4px;
+  font-size: 1em;
+  text-align: center;
+  line-height: 2em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.button:hover {
+  border-color: gray;
+}
+
+.button:active {
+  border-color: dimgray;
+}
+
+.message {
+  font-size: 1.25em;
+}
+
+.expander {
+  position: relative;
+}
+
+.expandable {
+  position: absolute;
+  display: none;
+  z-index: 1;
+  right: 0.75em;
+  text-align: right;
+}
+
+.expandable.open {
+  display: block;
+}
+
+.expandable > label,
+.expandable > input {
+  margin: 0.25em;
+}
