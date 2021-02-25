@@ -1,14 +1,15 @@
 import React from 'react';
 
 import Status from './Status';
+import Difficulty from './Difficulty';
 
 import './Bar.css';
 
 export default class Bar extends React.Component {
   state = {
-    width: "9",
-    height: "9",
-    bombsCount: "10",
+    width: '9',
+    height: '9',
+    bombsCount: '10',
     expanded: false,
   }
 
@@ -25,6 +26,11 @@ export default class Bar extends React.Component {
 
   handleInputChange = e => {
     this.setState({ [e.target.name]: e.target.value });
+  }
+
+  handleSelectChange = e => {
+    const { width, height, bombsCount } = Difficulty.filter(it => it.id === +e.target.value)[0].options;
+    this.setState({ width, height, bombsCount });
   }
 
   render() {
@@ -51,6 +57,13 @@ export default class Bar extends React.Component {
           <div className="main-item button expander" onClick={this.handleOptionsClick}>⚙</div>
         </div>
         <div className={expandable}>
+          <label>Пресет</label>
+          <select onChange={this.handleSelectChange}>
+          {Difficulty.map(it => (
+            <option key={it.id} value={it.id}>{it.name}</option>
+          ))}
+          </select>
+          <br/>
           <label>Ширина поля</label>
           <input type="text" name="width" value={this.state.width} onChange={this.handleInputChange}/>
           <br/>
@@ -59,6 +72,8 @@ export default class Bar extends React.Component {
           <br/>
           <label>Количество бомб</label>
           <input type="text" name="bombsCount" value={this.state.bombsCount} onChange={this.handleInputChange}/>
+          <br/>
+          <button onClick={this.handleRestartClick}>Принять</button>
         </div>
       </div>
     );

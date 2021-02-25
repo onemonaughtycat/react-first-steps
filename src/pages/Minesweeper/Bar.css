@@ -16,14 +16,15 @@
 
 .button {
   display: inline-block;
-  width: 2em;
-  height: 2em;
-  margin: 0.75em;
+  width: 32px;
+  height: 32px;
+  margin: 12px;
   border: black solid 2px;
   border-radius: 4px;
-  font-size: 1em;
+  font-size: 18px;
+  font-weight: bold;
   text-align: center;
-  line-height: 2em;
+  line-height: 32px;
   cursor: pointer;
   user-select: none;
 }
@@ -37,7 +38,8 @@
 }
 
 .message {
-  font-size: 1.25em;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .expander {
@@ -56,7 +58,20 @@
   display: block;
 }
 
-.expandable > label,
-.expandable > input {
-  margin: 0.25em;
+.expandable > label {
+  margin-right: 6px;
+}
+
+.expandable > input,
+.expandable > select,
+.expandable > button {
+  margin: 0 2px 8px 0;
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+.expandable > input,
+.expandable > select {
+  width: 10em;
+  padding: 0 0.2em;
 }
