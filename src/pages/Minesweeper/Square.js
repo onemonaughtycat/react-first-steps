@@ -39,6 +39,25 @@ export default class Square extends React.Component {
     this.buttons = null;
   }
 
+  handleTouchStart = e => {
+    this._timeStamp = e.timeStamp;
+  }
+
+  handleTouchEnd = e => {
+    e.preventDefault();
+
+    const diff = e.timeStamp - this._timeStamp;
+
+    if (!this.props.isOpened && diff < 500)
+      this.props.onSquareClick(Click.openSquare, this.props);
+
+    if (!this.props.isOpened && diff >= 500)
+      this.props.onSquareClick(Click.setMark, this.props);
+
+    if (this.props.isOpened)
+      this.props.onSquareClick(Click.openNearSquares, this.props);
+  }
+
   render() {
     const className = ['square'];
     let value = '';
@@ -62,6 +81,8 @@ export default class Square extends React.Component {
         onContextMenu={this.handleContextMenu}
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
+        onTouchStart={this.handleTouchStart}
+        onTouchEnd={this.handleTouchEnd}
       >
         <div className="value">
           {value}
