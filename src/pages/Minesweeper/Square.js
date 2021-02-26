@@ -84,6 +84,7 @@ export default class Square extends React.Component {
         onTouchStart={this.handleTouchStart}
         onTouchEnd={this.handleTouchEnd}
       >
+        <div className="dummy"></div>
         <div className="value">
           {value}
         </div>
