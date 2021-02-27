@@ -15,30 +15,55 @@ import Status from "./Status";
  */
 export default class Logic {
   /**
-   * Создать новое поле и сгенерировать бомбы на ней
+   * Создать новое поле.
    * @param {number} width Ширина
    * @param {number} height Высота
-   * @param {number} bombsCount Количество бомб
    * @returns {Square[][]} Поле
    */
-  static initBoard(width, height, bombsCount) {
-    const board = Array(+height).fill()
-      .map((_, y) => Array(+width).fill()
-        .map((_, x) => ({
-          x, y,
-          withBomb: false,
-          nearBombsCount: 0,
-          isOpened: false,
-          isMarked: false,
-          })
-        )
+  static initBoard(width, height) {
+    return Array(+height).fill().map((_, y) =>
+      Array(+width).fill().map((_, x) => ({
+        x, y,
+        withBomb: false,
+        nearBombsCount: 0,
+        isOpened: false,
+        isMarked: false,
+        })
       )
+    )
+  }
+
+  /**
+   * Cгенерировать бомбы на поле.
+   * @param {Square[][]} board Поле
+   * @param {Square} square Выбранная ячейка
+   * @param {number} bombsCount Количество бомб
+   * @returns {Square[][] | null} Новое поле
+   */
+  static generateBombs(board, square, bombsCount) {
+    board = board.map(row => row.map(sqr => sqr));
+
+    const cx = square.x
+    const cy = square.y
+
+    const width = board[0].length;
+    const height = board.length;
 
     for (let i = 0; i < +bombsCount; i++) {
       const x = Math.floor(Math.random() * width);
       const y = Math.floor(Math.random() * height);
 
-      if (!board[y][x].withBomb)
+      let canAdd = true;
+
+      if (board[y][x].withBomb)
+        canAdd = false;
+
+      const r = Math.random() >= 0.75 ? 1 : 0
+
+      if (cx - r <= x && x <= cx + r && cy - r <= y && y <= cy + r)
+        canAdd = false;
+
+      if (canAdd)
         board[y][x].withBomb = true;
       else
         i--;
@@ -61,9 +86,7 @@ export default class Logic {
       }
     }
 
-    Logic.logBoard(board);
-
-    return board;
+    return board
   }
 
   /**

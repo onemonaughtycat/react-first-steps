@@ -4,9 +4,10 @@
  * @enum {number}
  */
 const Status = {
-  running: 1,
-  lose: 2,
-  win: 3,
+  prepared: 1,
+  running: 2,
+  lose: 3,
+  win: 4
 }
 
-export default Status;
+export default Status

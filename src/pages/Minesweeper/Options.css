@@ -1,0 +1,17 @@
+.options > label {
+  margin-right: 6px;
+}
+
+.options > input,
+.options > select,
+.options > button {
+  margin: 0 2px 8px 0;
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+.options > input,
+.options > select {
+  width: 10em;
+  padding: 0 0.2em;
+}

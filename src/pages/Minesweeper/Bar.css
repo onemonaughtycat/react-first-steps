@@ -57,21 +57,3 @@
 .expandable.open {
   display: block;
 }
-
-.expandable > label {
-  margin-right: 6px;
-}
-
-.expandable > input,
-.expandable > select,
-.expandable > button {
-  margin: 0 2px 8px 0;
-  box-sizing: border-box;
-  font-family: monospace;
-}
-
-.expandable > input,
-.expandable > select {
-  width: 10em;
-  padding: 0 0.2em;
-}
